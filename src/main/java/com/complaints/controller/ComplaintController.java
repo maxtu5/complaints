@@ -1,10 +1,9 @@
-package com.example.demo.controller;
+package com.complaints.controller;
 
-import com.example.demo.dto.ComplaintRequestDto;
-import com.example.demo.dto.ComplaintResponseDto;
-import com.example.demo.service.ComplaintService;
+import com.complaints.dto.ComplaintRequestDto;
+import com.complaints.dto.ComplaintResponseDto;
+import com.complaints.service.ComplaintService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,7 +14,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/complaints")
 @RequiredArgsConstructor
-@Slf4j
 @CrossOrigin
 public class ComplaintController {
 
@@ -25,10 +23,14 @@ public class ComplaintController {
     public ComplaintResponseDto addComplaint(@RequestBody @Valid ComplaintRequestDto complaintRequestDto) {
         try {
             UUID userUuid = UUID.fromString(complaintRequestDto.getUserId());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad User Id");
+        }
+        try {
             UUID purchaseUuid = complaintRequestDto.getPurchaseId() == null ?
                     null : UUID.fromString(complaintRequestDto.getPurchaseId());
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad User Id");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad Purchase Id");
         }
         return complaintService.addComplaint(complaintRequestDto);
     }

@@ -1,7 +1,7 @@
-package com.example.demo.service;
+package com.complaints.service;
 
-import com.example.demo.dto.ComplaintRequestDto;
-import com.example.demo.dto.ComplaintResponseDto;
+import com.complaints.dto.ComplaintRequestDto;
+import com.complaints.dto.ComplaintResponseDto;
 
 import java.util.UUID;
 

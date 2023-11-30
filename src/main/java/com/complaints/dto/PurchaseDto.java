@@ -1,8 +1,8 @@
-package com.example.demo.dto;
+package com.complaints.dto;
 
-import com.example.demo.model.Currencies;
+import com.complaints.model.Currencies;
+import com.complaints.utils.Utc8601InstantSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,8 +20,6 @@ public class PurchaseDto {
     private Currencies priceCurrency;
     private Double discountPercent;
     private String merchantId;
-//    @JsonDeserialize(using = Utc8601OffsetDateTimeDeserializer.class)
-    @JsonSerialize(using = InstantSerializer.class)
-//    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", shape = JsonFormat.Shape.STRING )
+    @JsonSerialize(using = Utc8601InstantSerializer.class)
     private Instant purchaseDate;
 }

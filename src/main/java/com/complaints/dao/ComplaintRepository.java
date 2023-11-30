@@ -1,6 +1,6 @@
-package com.example.demo.dao;
+package com.complaints.dao;
 
-import com.example.demo.model.Complaint;
+import com.complaints.model.Complaint;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

@@ -1,7 +1,6 @@
-package com.example.demo.dao;
+package com.complaints.dao;
 
-import com.example.demo.dto.PurchaseDto;
-import com.example.demo.dto.UserDto;
+import com.complaints.dto.UserDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;

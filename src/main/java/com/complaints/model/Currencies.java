@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.complaints.model;
 
 public enum Currencies {
     EUR, NIS, USD

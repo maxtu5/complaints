@@ -1,7 +1,7 @@
-package com.example.demo.config;
+package com.complaints.config;
 
-import com.example.demo.dto.ComplaintRequestDto;
-import com.example.demo.model.Complaint;
+import com.complaints.dto.ComplaintRequestDto;
+import com.complaints.model.Complaint;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;

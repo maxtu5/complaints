@@ -1,15 +1,14 @@
-package com.example.demo.service;
+package com.complaints.service;
 
-import com.example.demo.dao.ComplaintRepository;
-import com.example.demo.dao.ExternalApiDataSource;
-import com.example.demo.dto.ComplaintRequestDto;
-import com.example.demo.dto.ComplaintResponseDto;
-import com.example.demo.dto.PurchaseDto;
-import com.example.demo.dto.UserDto;
-import com.example.demo.model.Complaint;
-import com.example.demo.model.ComplaintStatus;
+import com.complaints.dao.ComplaintRepository;
+import com.complaints.dao.ExternalApiDataSource;
+import com.complaints.dto.ComplaintRequestDto;
+import com.complaints.dto.ComplaintResponseDto;
+import com.complaints.dto.PurchaseDto;
+import com.complaints.dto.UserDto;
+import com.complaints.model.Complaint;
+import com.complaints.model.ComplaintStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ComplaintServiceImpl implements ComplaintService {
 
     private final ComplaintRepository complaintRepository;
