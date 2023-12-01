@@ -6,6 +6,7 @@ import com.complaints.dto.ComplaintRequestDto;
 import com.complaints.dto.ComplaintResponseDto;
 import com.complaints.dto.PurchaseDto;
 import com.complaints.dto.UserDto;
+import com.complaints.exceptions.ItemNotFoundException;
 import com.complaints.model.Complaint;
 import com.complaints.model.ComplaintStatus;
 import com.complaints.model.Currencies;
@@ -19,7 +20,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
@@ -111,8 +111,7 @@ public class ComplaintServiceImplTests {
             fail("");
         } catch (Exception e) {
             assertThat(e)
-                    .isInstanceOf(ResponseStatusException.class);
+                    .isInstanceOf(ItemNotFoundException.class);
         }
-
     }
 }
