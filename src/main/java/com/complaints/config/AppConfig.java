@@ -9,6 +9,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.config.Configuration.AccessLevel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.UUID;
 
@@ -24,6 +25,11 @@ public class AppConfig {
                 .setMatchingStrategy(MatchingStrategies.STRICT);
         configureTypeMaps(modelMapper);
         return modelMapper;
+    }
+
+    @Bean
+    RestTemplate getRestTemplate() {
+        return new RestTemplate();
     }
 
     private void configureTypeMaps(ModelMapper modelMapper) {

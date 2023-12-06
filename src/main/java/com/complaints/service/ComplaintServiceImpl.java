@@ -1,7 +1,6 @@
 package com.complaints.service;
 
-import com.complaints.dao.ComplaintRepository;
-import com.complaints.dao.ExternalApiDataSource;
+import com.complaints.dao.*;
 import com.complaints.dto.ComplaintRequestDto;
 import com.complaints.dto.ComplaintResponseDto;
 import com.complaints.dto.PurchaseDto;
@@ -23,18 +22,17 @@ import java.util.UUID;
 public class ComplaintServiceImpl implements ComplaintService {
 
     private final ComplaintRepository complaintRepository;
-    private final ExternalApiDataSource<PurchaseDto> purchaseDataSource;
-    private final ExternalApiDataSource<UserDto> userDataSource;
+    private final ExternalApiDataSourcePurchase purchaseDataSource;
+    private final ExternalApiDataSourceUser userDataSource;
     private final ModelMapper modelMapper;
 
     @Override
     public ComplaintResponseDto addComplaint(ComplaintRequestDto complaintRequestDto) {
-        UserDto user;
-        user = userDataSource.findById(UUID.fromString(complaintRequestDto.getUserId())).orElseThrow(() -> new ItemNotFoundException("User Id not found"));
+        UserDto user = userDataSource.findById(UUID.fromString(complaintRequestDto.getUserId())).orElseThrow(() -> new BadRequestException("User Id not found"));
         PurchaseDto purchase = null;
         if (complaintRequestDto.getPurchaseId() != null) {
             UUID purchaseUuid = UUID.fromString(complaintRequestDto.getPurchaseId());
-            purchase = purchaseDataSource.findById(purchaseUuid).orElseThrow(() -> new ItemNotFoundException("Purchase Id not found"));
+            purchase = purchaseDataSource.findById(purchaseUuid).orElseThrow(() -> new BadRequestException("Purchase Id not found"));
             if (!purchase.getUserId().equals(user.getId())) {
                 throw new BadRequestException("Purchase Id does not belong to User Id");
             }

@@ -2,7 +2,8 @@ package com.complaints.integration;
 
 import com.complaints.Demo1Application;
 import com.complaints.dao.ComplaintRepository;
-import com.complaints.dao.ExternalApiDataSource;
+import com.complaints.dao.ExternalApiDataSourcePurchase;
+import com.complaints.dao.ExternalApiDataSourceUser;
 import com.complaints.dto.ComplaintRequestDto;
 import com.complaints.dto.ComplaintResponseDto;
 import com.complaints.dto.PurchaseDto;
@@ -43,9 +44,9 @@ public class InventoryIntegrationTests {
     @Autowired
     private ComplaintRepository complaintRepository;
     @Autowired
-    private ExternalApiDataSource<PurchaseDto> purchaseDataSource;
+    private ExternalApiDataSourcePurchase purchaseDataSource;
     @Autowired
-    private ExternalApiDataSource<UserDto> userDataSource;
+    private ExternalApiDataSourceUser userDataSource;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired

@@ -1,11 +1,13 @@
 package com.complaints.unit;
 
 import com.complaints.dao.ComplaintRepository;
-import com.complaints.dao.ExternalApiDataSource;
+import com.complaints.dao.ExternalApiDataSourcePurchase;
+import com.complaints.dao.ExternalApiDataSourceUser;
 import com.complaints.dto.ComplaintRequestDto;
 import com.complaints.dto.ComplaintResponseDto;
 import com.complaints.dto.PurchaseDto;
 import com.complaints.dto.UserDto;
+import com.complaints.exceptions.BadRequestException;
 import com.complaints.exceptions.ItemNotFoundException;
 import com.complaints.model.Complaint;
 import com.complaints.model.ComplaintStatus;
@@ -39,9 +41,9 @@ public class ComplaintServiceImplTests {
     @MockBean
     private ComplaintRepository complaintRepository;
     @MockBean
-    private ExternalApiDataSource<UserDto> userDtoExternalApiDataSource;
+    private ExternalApiDataSourceUser userDtoExternalApiDataSource;
     @MockBean
-    private ExternalApiDataSource<PurchaseDto> purchaseDtoExternalApiDataSource;
+    private ExternalApiDataSourcePurchase purchaseDtoExternalApiDataSource;
     @Autowired
     private ComplaintService complaintService;
     @Autowired
@@ -111,7 +113,7 @@ public class ComplaintServiceImplTests {
             fail("");
         } catch (Exception e) {
             assertThat(e)
-                    .isInstanceOf(ItemNotFoundException.class);
+                    .isInstanceOf(BadRequestException.class);
         }
     }
 }
