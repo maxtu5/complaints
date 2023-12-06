@@ -1,13 +1,9 @@
 package com.complaints.dao;
 
 import com.complaints.dto.PurchaseDto;
-import com.complaints.dto.UserDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
 import java.util.Optional;
@@ -18,6 +14,8 @@ import java.util.UUID;
 public class ExternalApiDataSourcePurchase extends ExternalApiCaller<PurchaseDto> {
 
     private final String MOCK_PURCHASE_API_URL = "http://localhost:8081/purchases/%s";
+    private final String errorMessage = "Error retrieving purchase data";
+
     private final RestTemplate restTemplate;
 
     @PostConstruct
@@ -26,6 +24,6 @@ public class ExternalApiDataSourcePurchase extends ExternalApiCaller<PurchaseDto
     }
 
     public Optional<PurchaseDto> findById(UUID id) {
-        return super.findById(id, PurchaseDto.class, restTemplate);
+        return super.findById(id, PurchaseDto.class, restTemplate, errorMessage);
     }
 }

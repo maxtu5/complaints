@@ -14,6 +14,7 @@ import java.util.UUID;
 public class ExternalApiDataSourceUser extends ExternalApiCaller<UserDto> {
 
     private final String MOCK_USER_API_URL = "http://localhost:8081/users/%s";
+    private final String errorMessage = "Error retrieving user data";
     private final RestTemplate restTemplate;
 
     @PostConstruct
@@ -22,6 +23,6 @@ public class ExternalApiDataSourceUser extends ExternalApiCaller<UserDto> {
     }
 
     public Optional<UserDto> findById(UUID id) {
-        return super.findById(id, UserDto.class, restTemplate);
+        return super.findById(id, UserDto.class, restTemplate, errorMessage);
     }
 }

@@ -14,13 +14,13 @@ public class ExternalApiCaller<T> {
     @Setter
     private String urlExternalApi;
 
-    public Optional<T> findById(UUID id, Class<T> entityClass, RestTemplate restTemplate) {
+    public Optional<T> findById(UUID id, Class<T> entityClass, RestTemplate restTemplate, String errorMessage) {
         String userUrlString = String.format(urlExternalApi, id);
         try {
             T t = (T) restTemplate.getForObject(userUrlString, entityClass);
             return Optional.ofNullable(t);
         } catch (RestClientException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error retrieving external data");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage);
         }
     }
 
