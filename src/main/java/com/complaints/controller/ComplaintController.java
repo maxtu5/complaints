@@ -18,30 +18,6 @@ public class ComplaintController {
 
     private final ComplaintService complaintService;
 
-    @PostMapping(path = "/add")
-    public ComplaintResponseDto addComplaint(@RequestBody @Valid ComplaintRequestDto complaintRequestDto) {
-        try {
-            UUID userUuid = UUID.fromString(complaintRequestDto.getUserId());
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException("Bad User Id");
-        }
-        try {
-            UUID purchaseUuid = complaintRequestDto.getPurchaseId() == null ?
-                    null : UUID.fromString(complaintRequestDto.getPurchaseId());
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException("Bad Purchase Id");
-        }
-        return complaintService.addComplaint(complaintRequestDto);
-    }
 
-    @GetMapping(path = "/{complaintId}")
-    public ComplaintResponseDto service(@PathVariable String complaintId) {
-        UUID complaintUuid;
-        try {
-            complaintUuid = UUID.fromString(complaintId);
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException("Bad Complaint Id");
-        }
-        return complaintService.findComplaintById(complaintUuid);
-    }
+
 }

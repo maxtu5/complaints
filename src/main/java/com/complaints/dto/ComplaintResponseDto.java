@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -18,4 +19,6 @@ public class ComplaintResponseDto {
     private String status;
     private UserDto user;
     private PurchaseDto purchase;
+    private UUID userId;
+    private UUID purchaseId;
 }

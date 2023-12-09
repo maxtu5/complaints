@@ -27,11 +27,6 @@ public class AppConfig {
         return modelMapper;
     }
 
-    @Bean
-    RestTemplate getRestTemplate() {
-        return new RestTemplate();
-    }
-
     private void configureTypeMaps(ModelMapper modelMapper) {
         TypeMap<ComplaintRequestDto, Complaint> propertyMapper = modelMapper.createTypeMap(ComplaintRequestDto.class, Complaint.class);
         Converter<String, UUID> converter = c -> c.getSource()==null? null : UUID.fromString(c.getSource());

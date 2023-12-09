@@ -6,13 +6,14 @@ import com.complaints.dto.ComplaintResponseDto;
 import com.complaints.dto.PurchaseDto;
 import com.complaints.dto.UserDto;
 import com.complaints.exceptions.BadRequestException;
-import com.complaints.exceptions.InternalServerErrorException;
 import com.complaints.exceptions.ItemNotFoundException;
 import com.complaints.model.Complaint;
 import com.complaints.model.ComplaintStatus;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple3;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -27,43 +28,43 @@ public class ComplaintServiceImpl implements ComplaintService {
     private final ModelMapper modelMapper;
 
     @Override
-    public ComplaintResponseDto addComplaint(ComplaintRequestDto complaintRequestDto) {
-        UserDto user = userDataSource.findById(UUID.fromString(complaintRequestDto.getUserId())).orElseThrow(() -> new BadRequestException("User Id not found"));
-        PurchaseDto purchase = null;
-        if (complaintRequestDto.getPurchaseId() != null) {
-            UUID purchaseUuid = UUID.fromString(complaintRequestDto.getPurchaseId());
-            purchase = purchaseDataSource.findById(purchaseUuid).orElseThrow(() -> new BadRequestException("Purchase Id not found"));
-            if (!purchase.getUserId().equals(user.getId())) {
-                throw new BadRequestException("Purchase Id does not belong to User Id");
-            }
-        }
-        Complaint complaint = modelMapper.map(complaintRequestDto, Complaint.class);
+    public Mono<ComplaintResponseDto> addComplaint(ComplaintRequestDto complaintRequestDto) {
+        return Mono.just(complaintRequestDto)
+                .map(item -> modelMapper.map(item, ComplaintResponseDto.class))
+                .flatMap(this::updateItem)
+                .flatMap(this::saveComplaint);
+    }
+
+    private Mono<ComplaintResponseDto> saveComplaint(ComplaintResponseDto complaintResponseDto) {
+        Complaint complaint = modelMapper.map(complaintResponseDto, Complaint.class);
         complaint.setStatus(ComplaintStatus.STATUS_NEW);
         complaint.setCreateDate(Instant.now());
-        complaint = complaintRepository.save(complaint);
-        ComplaintResponseDto complaintResponseDto = modelMapper.map(complaint, ComplaintResponseDto.class);
-        complaintResponseDto.setUser(user);
-        if (purchase != null) {
-            complaintResponseDto.setPurchase(purchase);
-        }
-        return complaintResponseDto;
+        return complaintRepository.save(complaint)
+                .map(item -> modelMapper.map(item, ComplaintResponseDto.class));
     }
 
     @Override
-    public ComplaintResponseDto findComplaintById(UUID complaintId) {
-        Complaint complaint = complaintRepository.findById(complaintId)
-                .orElseThrow(() -> new ItemNotFoundException("Complaint Id not found"));
-        ComplaintResponseDto complaintResponseDto = modelMapper.map(complaint, ComplaintResponseDto.class);
-        UserDto user = userDataSource.findById(complaint.getUserId())
-                .orElseThrow(() -> new InternalServerErrorException("Wrong userId in complaint"));
-        complaintResponseDto.setUser(user);
-        if (complaint.getPurchaseId() != null) {
-            PurchaseDto purchase = purchaseDataSource.findById(complaint.getPurchaseId())
-                    .orElseThrow(() -> new InternalServerErrorException("Wrong purchaseId in complaint"));
-            complaintResponseDto.setPurchase(purchase);
-        }
-        complaintResponseDto.setUser(modelMapper.map(user, UserDto.class));
-        return complaintResponseDto;
+    public Mono<ComplaintResponseDto> findComplaintById(Long complaintId) {
+        return Mono.just(complaintId)
+                .flatMap(complaintRepository::findById)
+                .switchIfEmpty(Mono.error(new ItemNotFoundException("Complaint Id not found")))
+                .map(item -> modelMapper.map(item, ComplaintResponseDto.class))
+                .flatMap(this::updateItem);
+    }
+
+    private Mono<ComplaintResponseDto> updateItem(ComplaintResponseDto item) {
+        Mono<UserDto> user = userDataSource.findById(item.getUserId());
+        Mono<PurchaseDto> purchase = item.getPurchaseId()==null ? 
+                Mono.empty() :
+                purchaseDataSource.findById(item.getPurchaseId());
+        return Mono.zip(Mono.just(item), user, purchase)
+                .flatMap(this::updateItem);
+    }
+
+    private Mono<ComplaintResponseDto> updateItem(Tuple3<ComplaintResponseDto, UserDto, PurchaseDto> tuple) {
+        tuple.getT1().setUser(tuple.getT2());
+        tuple.getT1().setPurchase(tuple.getT3());
+        return Mono.just(tuple.getT1());
     }
 
 }
