@@ -22,6 +22,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
@@ -33,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -93,27 +96,29 @@ public class ComplaintServiceImplTests {
 
     @Test
     void addComplaint_ValidData() throws JsonProcessingException {
-        given(userDtoExternalApiDataSource.findById(any(UUID.class))).willReturn(Optional.of(user));
-        given(purchaseDtoExternalApiDataSource.findById(any(UUID.class))).willReturn(Optional.of(purchase));
-        given(complaintRepository.save(any(Complaint.class))).willReturn(complaint);
-        String actualResponseString = objectMapper.writeValueAsString(complaintService.addComplaint(request));
-        ComplaintResponseDto actualResponse = objectMapper.readValue(actualResponseString, ComplaintResponseDto.class);
-        assertThat(actualResponse.getSubject()).isEqualTo(expectedResponse.getSubject());
-        assertThat(actualResponse.getCreateDate().truncatedTo(ChronoUnit.DAYS)).isEqualTo(Instant.now().truncatedTo(ChronoUnit.DAYS));
-        assertThat(ComplaintStatus.valueOf(actualResponse.getStatus())).isEqualTo(ComplaintStatus.valueOf(expectedResponse.getStatus()));
-        assertThat(actualResponse.getUser().getId()).isEqualTo(user.getId());
-        assertThat(actualResponse.getPurchase().getId()).isEqualTo(purchase.getId());
+        given(userDtoExternalApiDataSource.findById(any(UUID.class))).willReturn(Mono.just(Optional.of(user)));
+        given(purchaseDtoExternalApiDataSource.findById(any(UUID.class))).willReturn(Mono.just(Optional.of(purchase)));
+        given(complaintRepository.save(any(Complaint.class))).willReturn(Mono.just(complaint));
+        Mono<ComplaintResponseDto> actualResponce = complaintService.addComplaint(request);
+        StepVerifier
+                .create(actualResponce)
+                .consumeNextWith(newComplaint -> {
+                    assertThat(newComplaint.getSubject()).isEqualTo(expectedResponse.getSubject());
+                    assertThat(newComplaint.getCreateDate().truncatedTo(ChronoUnit.DAYS)).isEqualTo(Instant.now().truncatedTo(ChronoUnit.DAYS));
+                    assertThat(ComplaintStatus.valueOf(newComplaint.getStatus())).isEqualTo(ComplaintStatus.valueOf(expectedResponse.getStatus()));
+                    assertThat(newComplaint.getUser().getId()).isEqualTo(user.getId());
+                    assertThat(newComplaint.getPurchase().getId()).isEqualTo(purchase.getId());
+                })
+                .verifyComplete();
     }
 
     @Test
     void addComplaint_InValidUserId() {
-        given(userDtoExternalApiDataSource.findById(any(UUID.class))).willReturn(Optional.of(user));
-        try {
-            complaintService.addComplaint(request);
-            fail("");
-        } catch (Exception e) {
-            assertThat(e)
-                    .isInstanceOf(BadRequestException.class);
-        }
+        given(userDtoExternalApiDataSource.findById(any(UUID.class))).willReturn(Mono.empty());
+        Mono<ComplaintResponseDto> actualResponse = complaintService.addComplaint(request);
+        StepVerifier
+                .create(actualResponse)
+                .expectErrorMatches(throwable -> throwable instanceof BadRequestException)
+                .verify();
     }
 }

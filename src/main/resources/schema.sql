@@ -1,0 +1,1 @@
+CREATE TABLE complaint (complaint_id UUID NOT NULL default random_uuid()  PRIMARY KEY, subject VARCHAR(255)  NOT NULL, complaint VARCHAR(2000)  NOT NULL, create_date TIMESTAMP  NOT NULL, status VARCHAR(10) NOT NULL, user_id UUID  NOT NULL, purchase_id UUID);

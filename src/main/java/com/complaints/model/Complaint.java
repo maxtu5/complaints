@@ -16,7 +16,7 @@ import java.util.UUID;
 @Getter
 public class Complaint {
     @Id
-    private Long complaintId;
+    private UUID complaintId;
     @NonNull
     private String subject;
     @NonNull
@@ -27,6 +27,6 @@ public class Complaint {
     @NonNull
     private ComplaintStatus status;
     @NonNull
-    private String userId;
-    private String purchaseId;
+    private UUID userId;
+    private UUID purchaseId;
 }

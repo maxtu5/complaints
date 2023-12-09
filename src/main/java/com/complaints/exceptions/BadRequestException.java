@@ -2,9 +2,16 @@ package com.complaints.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+
 public class BadRequestException extends ComplaintServiceException {
+
     public BadRequestException(String message) {
         super(message);
+    }
+
+    public BadRequestException(List<String> messages) {
+        super(messages);
     }
 
     @Override

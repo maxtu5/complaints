@@ -1,12 +1,11 @@
 package com.complaints.dao;
 
 import com.complaints.model.Complaint;
-import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 
 
 import java.util.UUID;
 
-public interface ComplaintRepository extends ReactiveCrudRepository<Complaint, Long> {
+public interface ComplaintRepository extends ReactiveCrudRepository<Complaint, UUID> {
 
 }

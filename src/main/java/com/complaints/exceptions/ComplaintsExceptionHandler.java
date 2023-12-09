@@ -27,7 +27,9 @@ public class ComplaintsExceptionHandler {
 
     @ExceptionHandler({ComplaintServiceException.class})
     public ResponseEntity<ApiError> handleNotFoundExceptions(final ComplaintServiceException ex, WebRequest request) {
-        ApiError apiError = new ApiError(ex.getStatus().toString(), ex.getResponseMessage(), ex.getLocalizedMessage());
+        ApiError apiError = ex.getErrors()==null ?
+                new ApiError(ex.getStatus().toString(), ex.getResponseMessage(), ex.getLocalizedMessage()) :
+                new ApiError(ex.getStatus().toString(), ex.getResponseMessage(), ex.getErrors());
         apiError.setPath(((ServletWebRequest) request).getRequest().getRequestURI());
         return new ResponseEntity<>(apiError, ex.getStatus());
     }

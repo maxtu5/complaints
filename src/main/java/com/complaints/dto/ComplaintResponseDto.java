@@ -1,6 +1,7 @@
 package com.complaints.dto;
 
 import com.complaints.utils.Utc8601InstantSerializer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,4 @@ public class ComplaintResponseDto {
     private String status;
     private UserDto user;
     private PurchaseDto purchase;
-    private UUID userId;
-    private UUID purchaseId;
 }

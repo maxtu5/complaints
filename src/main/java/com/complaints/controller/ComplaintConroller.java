@@ -14,17 +14,26 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/complaints")
 @RequiredArgsConstructor
-public class ReactiveConroller {
+public class ComplaintConroller {
 
     private final ComplaintService complaintService;
 
-    @GetMapping("/")
-    public Mono<String> getIndex() {
-        return Mono.just("Hello World!");
-    }
-
     @PostMapping(path = "/add")
     public Mono<ComplaintResponseDto> addComplaint(@RequestBody @Valid ComplaintRequestDto complaintRequestDto) {
+        return Mono.just(complaintRequestDto)
+                .map(this::validateUuids)
+                .flatMap(complaintService::addComplaint);
+    }
+
+    @GetMapping(path = "/{complaintId}")
+    public Mono<ComplaintResponseDto> service(@PathVariable String complaintId) {
+        return Mono.just(complaintId)
+                .map(UUID::fromString)
+                .onErrorResume(e -> Mono.error(new BadRequestException("Bad Complaint Id")))
+                .flatMap(complaintService::findComplaintById);
+    }
+
+    private ComplaintRequestDto validateUuids(ComplaintRequestDto complaintRequestDto) {
         try {
             UUID userUuid = UUID.fromString(complaintRequestDto.getUserId());
         } catch (IllegalArgumentException e) {
@@ -36,19 +45,7 @@ public class ReactiveConroller {
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("Bad Purchase Id");
         }
-        return complaintService.addComplaint(complaintRequestDto);
+        return complaintRequestDto;
     }
-
-    @GetMapping(path = "/{complaintId}")
-    public Mono<ComplaintResponseDto> service(@PathVariable Long complaintId) {
-//        UUID complaintUuid;
-//        try {
-//            complaintUuid = UUID.fromString(complaintId);
-//        } catch (IllegalArgumentException e) {
-//            throw new BadRequestException("Bad Complaint Id");
-//        }
-        return complaintService.findComplaintById(complaintId);
-    }
-
 
 }
